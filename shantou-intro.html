@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>汕头简介 - 鮀城·汕头</title>
+  <style>
+    /* 全局样式（与主页面一致） */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "微软雅黑", "PingFang SC", sans-serif;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+    body {
+      line-height: 1.8;
+      color: #333;
+      background-color: #f5f5f5;
+      overflow-x: hidden;
+      padding-top: 78px; /* 适配固定导航栏 */
+    }
+    /* 新增：弹窗打开时禁止页面滚动 */
+    body.modal-open {
+      overflow: hidden;
+      height: 100vh;
+    }
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    .page-title {
+      text-align: center;
+      font-size: 2.5rem;
+      color: #0066cc;
+      margin: 3rem 0 1.5rem;
+      position: relative;
+    }
+    .page-title::after {
+      content: "";
+      display: block;
+      width: 80px;
+      height: 3px;
+      background-color: #0066cc;
+      margin: 0.8rem auto 0;
+      border-radius: 2px;
+    }
+    /* 新增：返回按钮样式 */
+    .back-btn {
+      display: inline-block;
+      background: #0066cc;
+      color: white;
+      padding: 0.8rem 1.5rem;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 3px 8px rgba(0,102,204,0.2);
+    }
+    .back-btn:hover {
+      background: #0052a3;
+      transform: translateY(-2px);
+    }
+    .content-wrap {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+      padding: 3rem 2.5rem;
+      margin-bottom: 5rem;
+    }
+    .content-img {
+      width: 100%;
+      height: 450px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 2rem;
+    }
+    .content-text {
+      font-size: 1.1rem;
+      color: #333;
+      line-height: 2;
+      text-align: justify;
+      margin-bottom: 1.5rem;
+    }
+    .content-subtitle {
+      font-size: 1.8rem;
+      color: #0066cc;
+      margin: 2.5rem 0 1.2rem;
+    }
+    .content-list {
+      padding-left: 2rem;
+      margin-bottom: 1.5rem;
+    }
+    .content-list li {
+      margin-bottom: 0.8rem;
+      font-size: 1.1rem;
+    }
+
+    /* 导航栏（与主页面一致，修复链接指向） */
+    nav {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.98);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      z-index: 999;
+      padding: 1rem 0;
+    }
+    .nav-wrap {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #0066cc;
+      letter-spacing: 1px;
+    }
+    .nav-list {
+      display: flex;
+      list-style: none;
+      gap: 2.5rem;
+    }
+    .nav-list a {
+      font-size: 1.1rem;
+      font-weight: 500;
+      transition: all 0.3s;
+      padding: 0.3rem 0;
+      border-bottom: 2px solid transparent;
+    }
+    .nav-list a:hover, .nav-list a.active {
+      color: #0066cc;
+      border-bottom: 2px solid #0066cc;
+    }
+    .hamburger {
+      display: none;
+      font-size: 1.8rem;
+      cursor: pointer;
+      color: #333;
+    }
+
+    /* 回到顶部按钮（与主页面一致） */
+    .back-to-top {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: #0066cc;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      cursor: pointer;
+      box-shadow: 0 3px 10px rgba(0,102,204,0.3);
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s;
+      z-index: 999;
+      user-select: none;
+    }
+    .back-to-top.show {
+      opacity: 1;
+      visibility: visible;
+    }
+    .back-to-top:hover {
+      background: #0052a3;
+      transform: scale(1.1);
+    }
+
+    /* 页脚（与主页面一致，修复链接指向） */
+    footer {
+      padding: 4rem 0 2rem;
+      background: #333;
+      color: white;
+    }
+    .footer-nav {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      list-style: none;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .footer-nav a {
+      font-size: 1.1rem;
+      transition: color 0.3s;
+    }
+    .footer-nav a:hover {
+      color: #0066cc;
+    }
+    .footer-copyright {
+      text-align: center;
+      color: #ccc;
+      margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      font-size: 0.95rem;
+    }
+
+    /* 响应式适配 */
+    @media (max-width: 768px) {
+      .nav-list {
+        position: fixed;
+        top: 78px;
+        right: 0;
+        width: 200px;
+        background: white;
+        flex-direction: column;
+        gap: 0;
+        box-shadow: -2px 2px 8px rgba(0,0,0,0.1);
+        transform: translateX(100%);
+        transition: transform 0.3s;
+        z-index: 999;
+      }
+      .nav-list.show {
+        transform: translateX(0);
+      }
+      .nav-list li {
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid #f5f5f5;
+      }
+      .hamburger {
+        display: block;
+      }
+      .page-title {
+        font-size: 2.2rem;
+      }
+      .back-btn {
+        padding: 0.7rem 1.2rem;
+        font-size: 0.95rem;
+      }
+      .content-wrap {
+        padding: 2rem 1.5rem;
+        margin-bottom: 3rem;
+      }
+      .content-img {
+        height: 350px;
+      }
+      .content-text, .content-list li {
+        font-size: 1rem;
+      }
+      .content-subtitle {
+        font-size: 1.6rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .page-title {
+        font-size: 2rem;
+        margin: 2rem 0 1rem;
+      }
+      .back-btn {
+        padding: 0.6rem 1rem;
+        font-size: 0.9rem;
+      }
+      .content-wrap {
+        padding: 1.5rem 1rem;
+      }
+      .content-img {
+        height: 280px;
+      }
+      .content-text, .content-list li {
+        font-size: 0.95rem;
+      }
+      .content-subtitle {
+        font-size: 1.4rem;
+        margin: 2rem 0 1rem;
+      }
+    }
+
+    /* ========== 联系我们弹窗样式（与首页统一） ========== */
+    .contact-modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000; /* 高于导航栏，确保弹窗置顶 */
+    }
+    .contact-modal {
+      background-color: #fff;
+      padding: 2rem;
+      border-radius: 8px;
+      width: 100%;
+      max-width: 400px;
+    }
+    .contact-modal h3 {
+      color: #0066cc;
+      font-size: 1.5rem;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+    .contact-info {
+      list-style: none;
+      margin-bottom: 2rem;
+    }
+    .contact-info li {
+      margin-bottom: 1rem;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .close-btn {
+      background-color: #0066cc;
+      color: #fff;
+      border: none;
+      padding: 0.8rem 0;
+      width: 100%;
+      border-radius: 4px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .close-btn:hover {
+      background-color: #0052a3;
+    }
+  </style>
+</head>
+<body>
+<!-- 回到顶部按钮 -->
+<div class="back-to-top">↑</div>
+
+<!-- 导航栏（修复：走进汕头链接指向当前详情页） -->
+<nav>
+  <div class="container nav-wrap">
+    <div class="logo">鮀城·汕头</div>
+    <div class="hamburger">☰</div>
+    <ul class="nav-list">
+      <li><a href="index.html">网站首页</a></li>
+      <!-- 修复1：将index.html#intro改为当前页面shantou-intro.html -->
+      <li><a href="shantou-intro.html" class="active">走进汕头</a></li>
+      <li><a href="scenery.html">风景旅游</a></li>
+      <li><a href="food.html">当地美食</a></li>
+      <!-- 弹窗触发按钮：排除平滑滚动影响 -->
+      <li><a href="javascript:void(0);" id="openContactModal" class="modal-trigger">联系我们</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- 汕头简介内容（新增返回按钮） -->
+<section id="intro" class="intro-detail">
+  <div class="container">
+    <h2 class="page-title">汕头简介</h2>
+    <!-- 新增：返回按钮 -->
+    <button class="back-btn" id="goBackBtn">← 返回上一页</button>
+    <div class="content-wrap">
+      <img src="image/汕头简介.jpg" alt="汕头城市全景" class="content-img" loading="lazy">
+      <p class="content-text">
+        汕头，别称“鮀城”，地处广东省东部沿海，韩江三角洲南端，北接潮州，西邻揭阳，东南濒临南海，是粤东地区的政治、经济、文化中心，也是中国首批对外开放的经济特区之一、海上丝绸之路重要节点城市、国家历史文化名城。
+      </p>
+      <h3 class="content-subtitle">地理概况</h3>
+      <p class="content-text">
+        汕头全市总面积2199平方千米，下辖金平、龙湖、澄海、濠江、潮阳、潮南6个区和南澳1个县，常住人口超500万。境内地势平坦，河网密布，海岸线长达289.1千米，拥有南澳岛、妈屿岛等众多海岛，海域面积广阔，海洋资源丰富，兼具滨海风光与水乡韵味。
+      </p>
+      <h3 class="content-subtitle">城市特色</h3>
+      <ul class="content-list">
+        <li>「侨乡明珠」：汕头是全国著名侨乡，旅居海外的潮汕籍华侨华人超3000万，遍布世界100多个国家和地区，侨乡文化浓郁。</li>
+        <li>「经济特区」：1981年设立汕头经济特区，是中国改革开放的前沿阵地，如今已形成以纺织服装、化工塑料、电子信息等为主导的产业体系。</li>
+        <li>「美食之都」：汕头是“中国美食之都”，潮汕牛肉火锅、生腌、蚝烙等特色美食享誉全国，饮食文化独具魅力。</li>
+        <li>「生态宜居」：汕头拥有礐石风景区、南澳岛等多个自然景观，空气质量优良，是宜居宜游的滨海城市。</li>
+      </ul>
+      <h3 class="content-subtitle">城市定位</h3>
+      <p class="content-text">
+        近年来，汕头依托“侨乡”优势和特区政策，大力推进城市建设与产业升级，着力打造区域中心城市、滨海旅游目的地和粤港澳大湾区联动粤东的重要门户，正以全新的姿态展现“百年商埠·活力特区”的独特魅力。
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- 联系我们弹窗结构（与首页统一） -->
+<div class="contact-modal-overlay" id="contactModalOverlay" style="display: none;">
+  <div class="contact-modal">
+    <h3>联系我们</h3>
+    <ul class="contact-info">
+      <li><span class="icon">📞</span>咨询电话：0754-12345678</li>
+      <li><span class="icon">📧</span>联系邮箱：2594146485@qq.com</li>
+      <li><span class="icon">📍</span>办公地址：汕头市龙湖区海滨路123号文旅大厦</li>
+      <li><span class="icon">⏰</span>工作时间：周一至周五 9:00-17:30（节假日休息）</li>
+    </ul>
+    <button class="close-btn" id="closeContactModal">关闭</button>
+  </div>
+</div>
+
+<!-- 页脚（修复：走进汕头链接指向当前详情页） -->
+<footer>
+  <div class="container">
+    <ul class="footer-nav">
+      <li><a href="index.html">网站首页</a></li>
+      <!-- 修复2：将index.html#intro改为当前页面shantou-intro.html -->
+      <li><a href="shantou-intro.html">走进汕头</a></li>
+      <li><a href="scenery.html">风景旅游</a></li>
+      <li><a href="food.html">当地美食</a></li>
+      <!-- 弹窗触发按钮：排除平滑滚动影响 -->
+      <li><a href="javascript:void(0);" id="openContactModalFooter" class="modal-trigger">联系我们</a></li>
+    </ul>
+    <div class="footer-copyright">
+      <p>版权所有 © 2026 汕头文旅</p>
+      <p>联系邮箱：2594146485@qq.com</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // 导航栏汉堡菜单交互
+  const navList = document.querySelector('.nav-list');
+  const hamburger = document.querySelector('.hamburger');
+  hamburger.addEventListener('click', () => {
+    navList.classList.toggle('show');
+    hamburger.textContent = navList.classList.contains('show') ? '✕' : '☰';
+  });
+  document.querySelectorAll('.nav-list a').forEach(link => {
+    link.addEventListener('click', () => {
+      navList.classList.remove('show');
+      hamburger.textContent = '☰';
+    });
+  });
+  document.addEventListener('click', (e) => {
+    if (!navList.contains(e.target) && !hamburger.contains(e.target)) {
+      navList.classList.remove('show');
+      hamburger.textContent = '☰';
+    }
+  });
+
+  // 回到顶部功能
+  const backToTop = document.querySelector('.back-to-top');
+  window.addEventListener('scroll', () => {
+    backToTop.classList.toggle('show', window.scrollY > 300);
+  });
+  backToTop.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  // 返回上一页功能（优先历史回退，失败则跳转首页）
+  const goBackBtn = document.getElementById('goBackBtn');
+  goBackBtn.addEventListener('click', () => {
+    if (window.history.length > 1) {
+      window.history.back();
+    } else {
+      window.location.href = 'index.html';
+    }
+  });
+
+  // 图片加载失败兜底
+  document.querySelectorAll('img').forEach(img => {
+    img.addEventListener('error', () => {
+      img.src = 'https://via.placeholder.com/1200x450?text=汕头简介图片加载失败';
+      img.alt = '图片加载失败';
+    });
+  });
+
+  // 平滑滚动：排除弹窗触发按钮（.modal-trigger），避免误触发
+  document.querySelectorAll('a[href^="#"]:not(.modal-trigger)').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+      e.preventDefault();
+      const targetId = this.getAttribute('href');
+      const targetElement = document.querySelector(targetId);
+      if (targetElement) {
+        const navHeight = document.querySelector('nav').offsetHeight;
+        const targetTop = targetElement.offsetTop - navHeight;
+        window.scrollTo({ top: targetTop, behavior: 'smooth' });
+      }
+    });
+  });
+
+  // 联系我们弹窗交互逻辑（优化兼容问题）
+  const contactModalOverlay = document.getElementById('contactModalOverlay');
+  const openContactModalBtn = document.getElementById('openContactModal');
+  const openContactModalFooterBtn = document.getElementById('openContactModalFooter');
+  const closeContactModalBtn = document.getElementById('closeContactModal');
+  const body = document.querySelector('body');
+
+  // 打开弹窗
+  function openContactModal() {
+    contactModalOverlay.style.display = 'flex';
+    body.classList.add('modal-open'); // 禁止页面滚动
+    navList.classList.remove('show'); // 强制关闭汉堡菜单
+    hamburger.textContent = '☰';
+  }
+
+  // 关闭弹窗
+  function closeContactModal() {
+    contactModalOverlay.style.display = 'none';
+    body.classList.remove('modal-open'); // 恢复页面滚动
+  }
+
+  // 绑定按钮点击事件
+  openContactModalBtn?.addEventListener('click', openContactModal);
+  openContactModalFooterBtn?.addEventListener('click', openContactModal);
+  closeContactModalBtn?.addEventListener('click', closeContactModal);
+
+  // 点击遮罩层关闭弹窗
+  contactModalOverlay.addEventListener('click', (e) => {
+    if (e.target === contactModalOverlay) closeContactModal();
+  });
+
+  // 按ESC键关闭弹窗
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && contactModalOverlay.style.display === 'flex') {
+      closeContactModal();
+    }
+  });
+</script>
+</body>
+</html>

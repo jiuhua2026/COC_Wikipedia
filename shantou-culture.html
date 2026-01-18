@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>汕头文化 - 鮀城·汕头</title>
+  <style>
+    /* 全局样式（与其他页面一致，新增返回按钮样式） */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "微软雅黑", "PingFang SC", sans-serif;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+    body {
+      line-height: 1.8;
+      color: #333;
+      background-color: #f5f5f5;
+      overflow-x: hidden;
+      padding-top: 78px;
+    }
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    .page-title {
+      text-align: center;
+      font-size: 2.5rem;
+      color: #0066cc;
+      margin: 3rem 0 1.5rem;
+      position: relative;
+    }
+    .page-title::after {
+      content: "";
+      display: block;
+      width: 80px;
+      height: 3px;
+      background-color: #0066cc;
+      margin: 0.8rem auto 0;
+      border-radius: 2px;
+    }
+    /* 新增：返回按钮样式 */
+    .back-btn {
+      display: inline-block;
+      background: #0066cc;
+      color: white;
+      padding: 0.8rem 1.5rem;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 3px 8px rgba(0,102,204,0.2);
+    }
+    .back-btn:hover {
+      background: #0052a3;
+      transform: translateY(-2px);
+    }
+    .content-wrap {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+      padding: 3rem 2.5rem;
+      margin-bottom: 5rem;
+    }
+    .content-img {
+      width: 100%;
+      height: 450px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 2rem;
+    }
+    .content-text {
+      font-size: 1.1rem;
+      color: #333;
+      line-height: 2;
+      text-align: justify;
+      margin-bottom: 1.5rem;
+    }
+    .content-subtitle {
+      font-size: 1.8rem;
+      color: #0066cc;
+      margin: 2.5rem 0 1.2rem;
+    }
+    .content-list {
+      padding-left: 2rem;
+      margin-bottom: 1.5rem;
+    }
+    .content-list li {
+      margin-bottom: 0.8rem;
+      font-size: 1.1rem;
+    }
+
+    /* 导航栏（优化链接指向） */
+    nav {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.98);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      z-index: 999;
+      padding: 1rem 0;
+    }
+    .nav-wrap {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #0066cc;
+      letter-spacing: 1px;
+    }
+    .nav-list {
+      display: flex;
+      list-style: none;
+      gap: 2.5rem;
+    }
+    .nav-list a {
+      font-size: 1.1rem;
+      font-weight: 500;
+      transition: all 0.3s;
+      padding: 0.3rem 0;
+      border-bottom: 2px solid transparent;
+    }
+    .nav-list a:hover, .nav-list a.active {
+      color: #0066cc;
+      border-bottom: 2px solid #0066cc;
+    }
+    .hamburger {
+      display: none;
+      font-size: 1.8rem;
+      cursor: pointer;
+      color: #333;
+    }
+
+    /* 回到顶部按钮 */
+    .back-to-top {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: #0066cc;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      cursor: pointer;
+      box-shadow: 0 3px 10px rgba(0,102,204,0.3);
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s;
+      z-index: 999;
+      user-select: none;
+    }
+    .back-to-top.show {
+      opacity: 1;
+      visibility: visible;
+    }
+    .back-to-top:hover {
+      background: #0052a3;
+      transform: scale(1.1);
+    }
+
+    /* 页脚（优化链接指向） */
+    footer {
+      padding: 4rem 0 2rem;
+      background: #333;
+      color: white;
+    }
+    .footer-nav {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      list-style: none;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .footer-nav a {
+      font-size: 1.1rem;
+      transition: color 0.3s;
+    }
+    .footer-nav a:hover {
+      color: #0066cc;
+    }
+    .footer-copyright {
+      text-align: center;
+      color: #ccc;
+      margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      font-size: 0.95rem;
+    }
+
+    /* 响应式适配 */
+    @media (max-width: 768px) {
+      .nav-list {
+        position: fixed;
+        top: 78px;
+        right: 0;
+        width: 200px;
+        background: white;
+        flex-direction: column;
+        gap: 0;
+        box-shadow: -2px 2px 8px rgba(0,0,0,0.1);
+        transform: translateX(100%);
+        transition: transform 0.3s;
+        z-index: 999;
+      }
+      .nav-list.show {
+        transform: translateX(0);
+      }
+      .nav-list li {
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid #f5f5f5;
+      }
+      .hamburger {
+        display: block;
+      }
+      .page-title {
+        font-size: 2.2rem;
+      }
+      .back-btn {
+        padding: 0.7rem 1.2rem;
+        font-size: 0.95rem;
+      }
+      .content-wrap {
+        padding: 2rem 1.5rem;
+        margin-bottom: 3rem;
+      }
+      .content-img {
+        height: 350px;
+      }
+      .content-text, .content-list li {
+        font-size: 1rem;
+      }
+      .content-subtitle {
+        font-size: 1.6rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .page-title {
+        font-size: 2rem;
+        margin: 2rem 0 1rem;
+      }
+      .back-btn {
+        padding: 0.6rem 1rem;
+        font-size: 0.9rem;
+      }
+      .content-wrap {
+        padding: 1.5rem 1rem;
+      }
+      .content-img {
+        height: 280px;
+      }
+      .content-text, .content-list li {
+        font-size: 0.95rem;
+      }
+      .content-subtitle {
+        font-size: 1.4rem;
+        margin: 2rem 0 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+<!-- 回到顶部按钮 -->
+<div class="back-to-top">↑</div>
+
+<!-- 导航栏（优化链接指向） -->
+<nav>
+  <div class="container nav-wrap">
+    <div class="logo">鮀城·汕头</div>
+    <div class="hamburger">☰</div>
+    <ul class="nav-list">
+      <li><a href="index.html">网站首页</a></li>
+      <li><a href="index.html#intro" class="active">走进汕头</a></li>
+      <li><a href="index.html#scenery">风景旅游</a></li>
+      <li><a href="index.html#food">当地美食</a></li>
+      <li><a href="index.html#contact">联系我们</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- 汕头文化内容（新增返回按钮） -->
+<section id="intro" class="culture-detail">
+  <div class="container">
+    <h2 class="page-title">汕头文化</h2>
+    <!-- 新增：返回按钮 -->
+    <button class="back-btn" id="goBackBtn">← 返回上一页</button>
+    <div class="content-wrap">
+      <img src="image/汕头文化.jpg" alt="潮汕英歌舞表演" class="content-img" loading="lazy">
+      <p class="content-text">
+        汕头文化根植于潮汕大地，是岭南文化的重要分支，兼具海洋文化的开放包容与中原文化的厚重内敛，以潮剧、英歌舞、工夫茶等为代表的文化符号，承载着潮汕人的精神内核，也成为中华文化宝库中的独特瑰宝。
+      </p>
+      <h3 class="content-subtitle">传统艺术文化</h3>
+      <ul class="content-list">
+        <li>「潮剧」：又称“潮调”“潮州戏”，是中国古老的地方戏曲剧种之一，以婉转悠扬的唱腔、细腻传神的表演著称，2006年被列入第一批国家级非物质文化遗产名录。</li>
+        <li>「英歌舞」：流行于潮汕地区的民间广场舞蹈，融合了武术、舞蹈、戏曲等元素，表演气势磅礴，极具视觉冲击力，是潮汕春节、元宵等传统节日的重要民俗活动。</li>
+        <li>「潮汕木雕」：以精雕细琢、造型生动为特色，多用于建筑装饰、家具制作，题材涵盖人物、花鸟、瑞兽等，展现了潮汕工匠的高超技艺。</li>
+        <li>「嵌瓷」：潮汕传统建筑装饰工艺，以彩色瓷片镶嵌成各种图案，色彩鲜艳、经久耐用，是潮汕祠堂、民居建筑的标志性装饰。</li>
+      </ul>
+      <h3 class="content-subtitle">饮食与茶道文化</h3>
+      <p class="content-text">
+        汕头饮食文化源远流长，“食在潮汕”的美誉享誉全国，而工夫茶则是潮汕饮食文化的精髓。潮汕工夫茶讲究“和、敬、精、乐”的茶道精神，从茶具选择、茶叶冲泡到品饮礼仪，都有严格的规范，是潮汕人日常社交、情感交流的重要载体。
+      </p>
+      <p class="content-text">
+        除了工夫茶，潮汕美食注重“鲜、嫩、香、清”的口感，牛肉火锅、生腌、蚝烙、粿品等特色美食，不仅是味蕾的享受，更蕴含着潮汕人对食材的敬畏和对生活的热爱。
+      </p>
+      <h3 class="content-subtitle">侨乡与开埠文化</h3>
+      <p class="content-text">
+        汕头作为百年开埠城市，1860年开埠后成为近代中国重要的通商口岸，南洋文化与本土文化在此交融，形成了独特的开埠文化。小公园骑楼群便是开埠文化的标志性建筑，中西合璧的建筑风格，见证了汕头近代商贸的繁荣。
+      </p>
+      <p class="content-text">
+        侨乡文化则是汕头文化的另一大特色，海外华侨带回的先进理念与本土文化碰撞融合，既保留了潮汕传统文化的根脉，又注入了开放包容的时代气息，形成了“守正创新”的文化特质。
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- 页脚（优化链接指向） -->
+<footer id="contact">
+  <div class="container">
+    <ul class="footer-nav">
+      <li><a href="index.html">网站首页</a></li>
+      <li><a href="index.html#intro">走进汕头</a></li>
+      <li><a href="index.html#scenery">风景旅游</a></li>
+      <li><a href="index.html#food">当地美食</a></li>
+      <li><a href="mailto:2594146485@qq.com">联系我们</a></li>
+    </ul>
+    <div class="footer-copyright">
+      <p>版权所有 © 2026 汕头文旅</p>
+      <p>联系邮箱：2594146485@qq.com</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // 导航栏汉堡菜单交互
+  const navList = document.querySelector('.nav-list');
+  const hamburger = document.querySelector('.hamburger');
+  hamburger.addEventListener('click', () => {
+    navList.classList.toggle('show');
+    hamburger.textContent = navList.classList.contains('show') ? '✕' : '☰';
+  });
+  document.querySelectorAll('.nav-list a').forEach(link => {
+    link.addEventListener('click', () => {
+      navList.classList.remove('show');
+      hamburger.textContent = '☰';
+    });
+  });
+  document.addEventListener('click', (e) => {
+    if (!navList.contains(e.target) && !hamburger.contains(e.target)) {
+      navList.classList.remove('show');
+      hamburger.textContent = '☰';
+    }
+  });
+
+  // 回到顶部功能
+  const backToTop = document.querySelector('.back-to-top');
+  window.addEventListener('scroll', () => {
+    backToTop.classList.toggle('show', window.scrollY > 300);
+  });
+  backToTop.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  // 新增：返回上一页功能
+  const goBackBtn = document.getElementById('goBackBtn');
+  goBackBtn.addEventListener('click', () => {
+    if (window.history.length > 1) {
+      window.history.back();
+    } else {
+      window.location.href = 'index.html#intro';
+    }
+  });
+
+  // 图片加载失败兜底
+  document.querySelectorAll('img').forEach(img => {
+    img.addEventListener('error', () => {
+      img.src = 'https://via.placeholder.com/1200x450?text=汕头文化图片加载失败';
+      img.alt = '图片加载失败';
+    });
+  });
+
+  // 平滑滚动
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+      e.preventDefault();
+      const targetId = this.getAttribute('href');
+      const targetElement = document.querySelector(targetId);
+      if (targetElement) {
+        const navHeight = document.querySelector('nav').offsetHeight;
+        const targetTop = targetElement.offsetTop - navHeight;
+        window.scrollTo({ top: targetTop, behavior: 'smooth' });
+      }
+    });
+  });
+</script>
+</body>
+</html>

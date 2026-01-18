@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>鮀城·汕头 - 旅游网站</title>
+    <style>
+        /* 全局重置与基础样式（优化排版核心修改：添加横向滚动隐藏、文本自动换行） */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "微软雅黑", "PingFang SC", sans-serif;
+            word-wrap: break-word; /* 文本自动换行，防止溢出 */
+            overflow-wrap: break-word;
+        }
+        body {
+            line-height: 1.8;
+            color: #333;
+            background-color: #f5f5f5;
+            overflow-x: hidden; /* 隐藏横向滚动条，解决排版错乱 */
+        }
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            color: #0066cc;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+        .section-title::after {
+            content: "";
+            display: block;
+            width: 80px;
+            height: 3px;
+            background-color: #0066cc;
+            margin: 0.8rem auto 0;
+            border-radius: 2px;
+        }
+        .section-desc {
+            text-align: center;
+            color: #666;
+            font-size: 1.1rem;
+            margin-bottom: 4rem;
+            max-width: 800px; /* 限制描述文本宽度，提升排版美观度 */
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* 导航栏（含响应式汉堡菜单） */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            z-index: 999;
+            padding: 1rem 0;
+        }
+        .nav-wrap {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #0066cc;
+            letter-spacing: 1px;
+        }
+        .nav-list {
+            display: flex;
+            list-style: none;
+            gap: 2.5rem;
+        }
+        .nav-list a {
+            font-size: 1.1rem;
+            font-weight: 500;
+            transition: all 0.3s;
+            padding: 0.3rem 0;
+            border-bottom: 2px solid transparent;
+        }
+        .nav-list a:hover, .nav-list a.active {
+            color: #0066cc;
+            border-bottom: 2px solid #0066cc;
+        }
+        /* 汉堡菜单（移动端） */
+        .hamburger {
+            display: none;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: #333;
+        }
+
+        /* Banner轮播区域（解决图片显示问题） */
+        .banner {
+            margin-top: 78px;
+            height: calc(100vh - 78px);
+            max-height: 700px;
+            position: relative;
+            overflow: hidden;
+        }
+        .banner-slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 1s ease;
+            background-position: center center;
+            background-size: cover; /* 确保图片完整覆盖区域 */
+        }
+        .banner-slide.active {
+            opacity: 1;
+        }
+        .banner-mask {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.3);
+        }
+        .banner-title {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: white;
+            width: 90%; /* 限制标题宽度，避免移动端文本溢出 */
+        }
+        .banner-title h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+        .banner-title p {
+            font-size: 1.3rem;
+            text-shadow: 0 1px 4px rgba(0,0,0,0.3);
+        }
+        .banner-indicators {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+        }
+        .banner-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.6);
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .banner-indicator.active {
+            background: white;
+            width: 30px;
+            border-radius: 6px;
+        }
+
+        /* 走进汕头板块（核心修改：改为横向排列） */
+        .intro {
+            padding: 6rem 0; /* 减小上下间距，优化排版 */
+            background: white;
+        }
+        /* 核心调整：强制横向Flex布局，确保卡片并排 */
+        .intro-cards {
+            display: flex;
+            flex-direction: row; /* 明确横向排列 */
+            flex-wrap: wrap; /* 移动端自动换行 */
+            gap: 2.5rem;
+            justify-content: center;
+            align-items: stretch; /* 让所有卡片高度一致 */
+            width: 100%;
+        }
+        /* 卡片链接样式：消除a标签默认影响 */
+        .card-link {
+            text-decoration: none;
+            color: inherit;
+            display: block; /* 确保整个卡片可点击 */
+            flex: 1; /* 让卡片自动分配宽度（桌面端） */
+            min-width: 300px; /* 移动端最小宽度 */
+            max-width: 32%; /* 桌面端最多3张并排 */
+        }
+        .card {
+            width: 100%; /* 继承父容器宽度 */
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: box-shadow 0.4s ease;
+            cursor: pointer;
+            height: 100%; /* 填满父容器高度 */
+        }
+        .card:hover {
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        .card-img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+        }
+        .card-content {
+            padding: 1.5rem 1.5rem; /* 减小内边距，优化排版 */
+        }
+        .card-title {
+            font-size: 1.6rem;
+            color: #0066cc;
+            margin-bottom: 1rem;
+            text-align: center; /* 卡片标题居中，提升美观度 */
+        }
+        .card-desc {
+            color: #666;
+            font-size: 1rem;
+            line-height: 1.8;
+            text-align: justify; /* 文本两端对齐，优化排版 */
+        }
+
+        /* 秀丽汕头轮播（修复向左滑动bug+优化排版） */
+        .scenery {
+            padding: 6rem 0; /* 减小上下间距，优化排版 */
+            background: #f9f9f9;
+        }
+        .carousel {
+            position: relative;
+            max-width: 1000px;
+            margin: 0 auto;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+        .carousel-container {
+            display: flex;
+            transition: transform 0.5s ease;
+            touch-action: pan-y; /* 允许触摸滑动 */
+            cursor: grab; /* 鼠标样式提示可拖拽 */
+            width: 100%; /* 新增：固定容器宽度，解决拖拽布局错乱 */
+        }
+        .carousel-container:active {
+            cursor: grabbing; /* 拖拽中鼠标样式 */
+        }
+        .carousel-slide {
+            min-width: 100%;
+        }
+        /* 新增：轮播slide内部跳转链接样式 */
+        .carousel-slide-link {
+            display: block; /* 占满整个slide区域 */
+            width: 100%;
+            height: 100%;
+            text-decoration: none;
+            color: inherit; /* 继承文本颜色，取消链接默认蓝色 */
+        }
+        .carousel-img {
+            width: 100%;
+            height: 500px;
+            object-fit: cover;
+        }
+        .carousel-desc {
+            padding: 1.2rem; /* 减小内边距，优化排版 */
+            background: white;
+            font-size: 1.1rem; /* 减小字体，避免移动端溢出 */
+            color: #333;
+            text-align: center;
+        }
+        .carousel-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255,255,255,0.9);
+            border: none;
+            font-size: 2rem;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            color: #0066cc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            opacity: 0.8;
+            z-index: 10; /* 新增：提高层级，避免被遮挡 */
+        }
+        .carousel-btn:hover {
+            background: white;
+            transform: translateY(-50%) scale(1.1);
+            opacity: 1;
+        }
+        .prev {
+            left: 20px;
+        }
+        .next {
+            right: 20px;
+        }
+        .carousel-indicators {
+            display: flex;
+            justify-content: center;
+            gap: 0.8rem;
+            margin-top: 1.5rem; /* 减小间距，优化排版 */
+        }
+        .carousel-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ccc;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .carousel-indicator.active {
+            background: #0066cc;
+            width: 30px;
+            border-radius: 6px;
+        }
+
+        /* 美食汕头板块 */
+        .food {
+            padding: 6rem 0; /* 减小上下间距，优化排版 */
+            background: white;
+        }
+        .food-cards {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: center;
+        }
+        .food-card {
+            width: 22%;
+            min-width: 220px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: all 0.4s ease;
+            position: relative;
+        }
+        .food-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        .food-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        .food-desc {
+            padding: 1.2rem;
+            text-align: center;
+            font-size: 1.1rem;
+            color: #333;
+        }
+        /* 美食 hover 提示（优化排版，防止文本溢出） */
+        .food-tooltip {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 0.8rem; /* 减小内边距 */
+            background: rgba(0,102,204,0.9);
+            color: white;
+            font-size: 0.9rem; /* 减小字体 */
+            opacity: 0;
+            transition: opacity 0.3s, bottom 0.3s;
+            border-radius: 0 0 10px 10px;
+            word-wrap: break-word;
+            line-height: 1.6;
+        }
+        .food-card:hover .food-tooltip {
+            opacity: 1;
+            bottom: 0;
+        }
+
+        /* 回到顶部按钮 */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #0066cc;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 3px 10px rgba(0,102,204,0.3);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            z-index: 999;
+            user-select: none;
+        }
+        .back-to-top.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        .back-to-top:hover {
+            background: #0052a3;
+            transform: scale(1.1);
+        }
+
+        /* 【修改】联系我们弹窗样式（与截图完全一致） */
+        .contact-modal-mask {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            padding: 20px;
+        }
+        .contact-modal-mask.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        .contact-modal {
+            width: 100%;
+            max-width: 450px;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .contact-modal-title {
+            text-align: center;
+            font-size: 1.8rem;
+            color: #0066cc;
+            padding: 1.5rem 0;
+            font-weight: 700;
+        }
+        .contact-modal-info {
+            padding: 0 2rem 1.5rem;
+            line-height: 2.2;
+            font-size: 1.1rem;
+        }
+        .contact-modal-info p {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+        .contact-modal-info p span {
+            font-size: 1.3rem;
+        }
+        .contact-modal-close {
+            width: 100%;
+            padding: 1rem;
+            background: #0066cc;
+            color: white;
+            border: none;
+            font-size: 1.2rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .contact-modal-close:hover {
+            background: #0052a3;
+        }
+
+        /* 页脚（优化排版，减小冗余间距） */
+        footer {
+            padding: 4rem 0 2rem; /* 减小顶部间距 */
+            background: #333;
+            color: white;
+        }
+        .footer-nav {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            list-style: none;
+            margin-bottom: 1.5rem; /* 减小间距 */
+            flex-wrap: wrap;
+        }
+        .footer-nav a {
+            font-size: 1.1rem;
+            transition: color 0.3s;
+        }
+        .footer-nav a:hover {
+            color: #0066cc;
+        }
+        .footer-copyright {
+            text-align: center;
+            color: #ccc;
+            margin-top: 1.5rem; /* 减小间距 */
+            padding-top: 1.5rem; /* 减小间距 */
+            border-top: 1px solid rgba(255,255,255,0.1);
+            font-size: 0.95rem; /* 减小字体 */
+        }
+
+        /* 响应式适配（优化排版，解决布局错乱） */
+        @media (max-width: 1024px) {
+            .card-link {
+                max-width: 45%; /* 平板端2张并排 */
+            }
+            .food-card {
+                width: 30%;
+            }
+            .banner-title h1 {
+                font-size: 2.8rem;
+            }
+            .carousel-img {
+                height: 450px; /* 调整轮播图片高度，优化排版 */
+            }
+        }
+
+        @media (max-width: 768px) {
+            /* 导航栏汉堡菜单 */
+            .nav-list {
+                position: fixed;
+                top: 78px;
+                right: 0;
+                width: 200px;
+                background: white;
+                flex-direction: column;
+                gap: 0;
+                box-shadow: -2px 2px 8px rgba(0,0,0,0.1);
+                transform: translateX(100%);
+                transition: transform 0.3s;
+                z-index: 999;
+            }
+            .nav-list.show {
+                transform: translateX(0);
+            }
+            .nav-list li {
+                padding: 1rem 1.5rem;
+                border-bottom: 1px solid #f5f5f5;
+            }
+            .hamburger {
+                display: block;
+            }
+            .banner-title h1 {
+                font-size: 2.2rem;
+            }
+            .card-link {
+                max-width: 100%; /* 移动端1张独占一行 */
+            }
+            .food-card {
+                width: 45%;
+                margin-bottom: 1rem; /* 增加卡片间距，优化排版 */
+            }
+            .carousel-img {
+                height: 350px;
+            }
+            .carousel-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 1.5rem;
+            }
+            .section-title {
+                font-size: 2.2rem; /* 减小标题字体，优化移动端排版 */
+            }
+            .section-desc {
+                font-size: 1rem; /* 减小描述字体，优化移动端排版 */
+            }
+        }
+
+        @media (max-width: 480px) {
+            .banner-title h1 {
+                font-size: 1.8rem;
+            }
+            .banner-title p {
+                font-size: 1.1rem; /* 减小副标题字体，避免溢出 */
+            }
+            .section-title {
+                font-size: 2rem;
+            }
+            .food-card {
+                width: 100%;
+                max-width: 300px;
+            }
+            .carousel-img {
+                height: 280px;
+            }
+            /* 移动端隐藏轮播按钮，仅保留触摸滑动 */
+            .carousel-btn {
+                display: none;
+            }
+            .card-content {
+                padding: 1.2rem 1rem; /* 进一步减小移动端卡片内边距 */
+            }
+            .card-title {
+                font-size: 1.4rem; /* 减小移动端卡片标题字体 */
+            }
+            .card-desc {
+                font-size: 0.95rem; /* 减小移动端卡片描述字体 */
+            }
+            /* 移动端弹窗适配 */
+            .contact-modal-title {
+                font-size: 1.5rem;
+                padding: 1.2rem 0;
+            }
+            .contact-modal-info {
+                padding: 0 1.5rem 1.2rem;
+                font-size: 1rem;
+            }
+            .contact-modal-close {
+                font-size: 1.1rem;
+                padding: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- 回到顶部按钮 -->
+<div class="back-to-top">↑</div>
+
+<!-- 导航栏 -->
+<nav>
+    <div class="container nav-wrap">
+        <div class="logo">鮀城·汕头</div>
+        <div class="hamburger">☰</div>
+        <ul class="nav-list">
+            <li><a href="#home" class="active">网站首页</a></li>
+            <li><a href="#intro">走进汕头</a></li>
+            <li><a href="#scenery">风景旅游</a></li>
+            <li><a href="#food">当地美食</a></li>
+            <li><a href="#contactModal" id="navContactLink">联系我们</a></li>
+        </ul>
+    </div>
+</nav>
+
+<!-- Banner轮播区域 -->
+<section id="home" class="banner">
+    <div class="banner-slide active" style="background-image: url('image/大桥.jpg')"></div>
+    <div class="banner-slide" style="background-image: url('image/汕头风光.jpg')"></div>
+    <div class="banner-slide" style="background-image: url('image/汕头.jpg')"></div>
+    <div class="banner-mask"></div>
+    <div class="banner-title">
+        <h1>鮀城·汕头</h1>
+        <p>南海之滨的侨乡明珠 · 潮味浓郁的特区之城</p>
+    </div>
+    <div class="banner-indicators">
+        <span class="banner-indicator active" data-index="0"></span>
+        <span class="banner-indicator" data-index="1"></span>
+        <span class="banner-indicator" data-index="2"></span>
+    </div>
+</section>
+
+<!-- 走进汕头板块（已改为横向排列） -->
+<section id="intro" class="intro">
+    <div class="container">
+        <h2 class="section-title">走进汕头</h2>
+        <p class="section-desc">千年潮韵，百年开埠，一座联结海内外的滨海之城</p>
+        <div class="intro-cards">
+            <!-- 汕头简介卡片（跳转新页面） -->
+            <a href="shantou-intro.html" class="card-link">
+                <div class="card">
+                    <img src="image/汕头简介.jpg" alt="汕头简介" class="card-img" loading="lazy">
+                    <div class="card-content">
+                        <h3 class="card-title">汕头简介</h3>
+                        <p class="card-desc">汕头地处广东省东部，别称“鮀城”，是中国首批经济特区之一，濒临南海，是粤东地区的政治、经济、文化中心。作为著名侨乡，汕头联结海内外超3000万潮汕人，同时是海上丝绸之路的重要节点城市，兼具蔚蓝海洋风光与深厚人文底蕴。</p>
+                    </div>
+                </div>
+            </a>
+            <!-- 汕头文化卡片（跳转新页面） -->
+            <a href="shantou-culture.html" class="card-link">
+                <div class="card">
+                    <img src="image/汕头文化.jpg" alt="汕头文化" class="card-img" loading="lazy">
+                    <div class="card-content">
+                        <h3 class="card-title">汕头文化</h3>
+                        <p class="card-desc">汕头承载深厚的潮汕文化：潮剧婉转悠扬、英歌舞气势磅礴、工夫茶意蕴悠长；开埠文化孕育了小公园骑楼群等南洋风格建筑，侨乡文化则串联起海内外潮汕人的情感纽带，多元文化在此交融共生，形成独特的“潮味”气质。</p>
+                    </div>
+                </div>
+            </a>
+            <!-- 汕头历史卡片（跳转新页面） -->
+            <a href="shantou-history.html" class="card-link">
+                <div class="card">
+                    <img src="image/汕头历史.jpg" alt="汕头历史" class="card-img" loading="lazy">
+                    <div class="card-content">
+                        <h3 class="card-title">汕头历史</h3>
+                        <p class="card-desc">汕头于1860年开埠，成为近代中国重要通商口岸；1981年设立经济特区，开启改革开放新篇。历史上，汕头是潮汕地区的商贸枢纽，海洋贸易传统悠久，如今既保留老城骑楼、老妈宫等古韵，也兼具特区现代化发展的活力。</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- 秀丽汕头轮播（修复按钮跳转+灵敏度问题） -->
+<section id="scenery" class="scenery">
+    <div class="container">
+        <h2 class="section-title">秀丽汕头</h2>
+        <p class="section-desc">山海相依，城岛相连，邂逅汕头的自然与人文之美</p>
+        <!-- 移除包裹整个carousel的a标签，改为每个slide内部加链接 -->
+        <div class="carousel">
+            <button class="carousel-btn prev">&lt;</button>
+            <div class="carousel-container">
+                <div class="carousel-slide">
+                    <a href="scenery.html" class="carousel-slide-link">
+                        <img src="image/南澳岛.jpg" alt="南澳岛" class="carousel-img" loading="lazy">
+                        <p class="carousel-desc">南澳岛 - 粤东海上明珠，碧海青山交织历史遗迹，是中国唯一全岛域国家4A级旅游景区</p>
+                    </a>
+                </div>
+                <div class="carousel-slide">
+                    <a href="scenery.html" class="carousel-slide-link">
+                        <img src="image/磐石风景区.jpg" alt="礐石风景区" class="carousel-img" loading="lazy">
+                        <p class="carousel-desc">礐石风景区 - 山水园林秘境，奇石秀水与亭台楼阁相映，登塔可瞰汕头湾全景</p>
+                    </a>
+                </div>
+                <div class="carousel-slide">
+                    <a href="scenery.html" class="carousel-slide-link">
+                        <img src="image/小公园.jpg" alt="小公园老市区" class="carousel-img" loading="lazy">
+                        <p class="carousel-desc">小公园老市区 - 百年骑楼建筑群，老城烟火与复古风情交融，是汕头开埠文化的核心地标</p>
+                    </a>
+                </div>
+                <div class="carousel-slide">
+                    <a href="scenery.html" class="carousel-slide-link">
+                        <img src="image/汕大.jpg" alt="汕头大学" class="carousel-img" loading="lazy">
+                        <p class="carousel-desc">汕头大学 - 园林式校园，真理钟、水库湖与现代建筑相融，是“中国最美大学”之一</p>
+                    </a>
+                </div>
+                <div class="carousel-slide">
+                    <a href="scenery.html" class="carousel-slide-link">
+                        <img src="image/妈屿岛.jpg" alt="妈屿岛" class="carousel-img" loading="lazy">
+                        <p class="carousel-desc">妈屿岛 - 滨海文艺小岛，渔村古厝与网红打卡点共存，可赏汕头湾跨海大桥盛景</p>
+                    </a>
+                </div>
+            </div>
+            <button class="carousel-btn next">&gt;</button>
+        </div>
+        <div class="carousel-indicators">
+            <span class="carousel-indicator active" data-index="0"></span>
+            <span class="carousel-indicator" data-index="1"></span>
+            <span class="carousel-indicator" data-index="2"></span>
+            <span class="carousel-indicator" data-index="3"></span>
+            <span class="carousel-indicator" data-index="4"></span>
+        </div>
+    </div>
+</section>
+
+<!-- 美食汕头板块 -->
+<!-- 美食汕头板块（添加跳转链接） -->
+<section id="food" class="food">
+    <div class="container">
+        <h2 class="section-title">美食汕头</h2>
+        <p class="section-desc">“中国美食之都”，一口尝尽潮味鲜香</p>
+        <div class="food-cards">
+            <!-- 给每个美食卡片添加跳转链接 -->
+            <a href="food.html" class="card-link" style="width: 22%; min-width: 220px; text-decoration: none; color: inherit;">
+                <div class="food-card">
+                    <img src="image/牛肉火锅.jpg" alt="潮汕牛肉火锅" class="food-img" loading="lazy">
+                    <p class="food-desc">潮汕牛肉火锅</p>
+                    <div class="food-tooltip">现切鲜牛肉，按部位分秒涮煮，搭配沙茶酱，嫩弹鲜香</div>
+                </div>
+            </a>
+            <a href="food.html" class="card-link" style="width: 22%; min-width: 220px; text-decoration: none; color: inherit;">
+                <div class="food-card">
+                    <img src="image/生腌.jpg" alt="生腌海鲜" class="food-img" loading="lazy">
+                    <p class="food-desc">生腌海鲜</p>
+                    <div class="food-tooltip">俗称“潮汕毒药”，蟹/虾/蚝经酱料腌制，鲜爽入味越吃越上头</div>
+                </div>
+            </a>
+            <a href="food.html" class="card-link" style="width: 22%; min-width: 220px; text-decoration: none; color: inherit;">
+                <div class="food-card">
+                    <img src="image/粿条.jpg" alt="粿条汤" class="food-img" loading="lazy">
+                    <p class="food-desc">粿条汤</p>
+                    <div class="food-tooltip">早餐标配，骨汤打底，配鲜肉/海鲜，粿条滑嫩汤头鲜甜</div>
+                </div>
+            </a>
+            <a href="food.html" class="card-link" style="width: 22%; min-width: 220px; text-decoration: none; color: inherit;">
+                <div class="food-card">
+                    <img src="image/蚝烙.jpg" alt="蚝烙" class="food-img" loading="lazy">
+                    <p class="food-desc">蚝烙</p>
+                    <div class="food-tooltip">生蚝+鸡蛋+薯粉煎制，外酥里嫩，蘸鱼露吃鲜香味浓</div>
+                </div>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- 【修改】联系我们弹窗（与截图完全一致） -->
+<div class="contact-modal-mask" id="contactModalMask">
+    <div class="contact-modal">
+        <h3 class="contact-modal-title">联系我们</h3>
+        <div class="contact-modal-info">
+            <p><span>📞</span>咨询电话：0754-12345678</p>
+            <p><span>📧</span>联系邮箱：2594146485@qq.com</p>
+            <p><span>📍</span>办公地址：汕头市龙湖区海滨路123号文旅大厦</p>
+            <p><span>⏰</span>工作时间：周一至周五 9:00-17:30（节假日休息）</p>
+        </div>
+        <button class="contact-modal-close" id="closeModal">关闭</button>
+    </div>
+</div>
+
+<!-- 页脚 -->
+<footer id="contact">
+    <div class="container">
+        <ul class="footer-nav">
+            <li><a href="#home">网站首页</a></li>
+            <li><a href="#intro">走进汕头</a></li>
+            <li><a href="#scenery">风景旅游</a></li>
+            <li><a href="#food">当地美食</a></li>
+            <li><a href="#contactModal" id="contactLink">联系我们</a></li>
+        </ul>
+        <div class="footer-copyright">
+            <p>版权所有 © 2026 汕头文旅</p>
+            <p>联系邮箱：2594146485@qq.com</p>
+        </div>
+    </div>
+</footer>
+
+<script>
+    // 1. 导航栏交互（高亮+汉堡菜单）
+    const navLinks = document.querySelectorAll('.nav-list a');
+    const navList = document.querySelector('.nav-list');
+    const hamburger = document.querySelector('.hamburger');
+
+    // 导航链接高亮
+    window.addEventListener('scroll', () => {
+        const sections = document.querySelectorAll('section');
+        let currentSectionId = '';
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop - 100;
+            const sectionHeight = section.offsetHeight;
+            if (window.scrollY >= sectionTop && window.scrollY < sectionTop + sectionHeight) {
+                currentSectionId = section.getAttribute('id');
+            }
+        });
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === `#${currentSectionId}`) {
+                link.classList.add('active');
+            }
+        });
+    });
+
+    // 汉堡菜单切换
+    hamburger.addEventListener('click', () => {
+        navList.classList.toggle('show');
+        hamburger.textContent = navList.classList.contains('show') ? '✕' : '☰';
+    });
+    navLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            navList.classList.remove('show');
+            hamburger.textContent = '☰';
+        });
+    });
+
+    // 点击空白处关闭汉堡菜单
+    document.addEventListener('click', (e) => {
+        if (!navList.contains(e.target) && !hamburger.contains(e.target)) {
+            navList.classList.remove('show');
+            hamburger.textContent = '☰';
+        }
+    });
+
+    // 2. Banner轮播功能
+    const bannerSlides = document.querySelectorAll('.banner-slide');
+    const bannerIndicators = document.querySelectorAll('.banner-indicator');
+    let bannerIndex = 0;
+    let bannerTimer = null;
+
+    function updateBanner() {
+        bannerSlides.forEach((slide, i) => {
+            slide.classList.toggle('active', i === bannerIndex);
+        });
+        bannerIndicators.forEach((indicator, i) => {
+            indicator.classList.toggle('active', i === bannerIndex);
+        });
+    }
+
+    // 自动轮播
+    function startBannerTimer() {
+        bannerTimer = setInterval(() => {
+            bannerIndex = (bannerIndex + 1) % bannerSlides.length;
+            updateBanner();
+        }, 5000);
+    }
+    startBannerTimer();
+
+    // 鼠标悬停暂停轮播
+    document.querySelector('.banner').addEventListener('mouseenter', () => {
+        clearInterval(bannerTimer);
+    });
+    document.querySelector('.banner').addEventListener('mouseleave', () => {
+        startBannerTimer();
+    });
+
+    // 指示器点击
+    bannerIndicators.forEach((indicator, i) => {
+        indicator.addEventListener('click', () => {
+            bannerIndex = i;
+            updateBanner();
+        });
+    });
+
+    // 3. 秀丽汕头轮播功能（修复按钮跳转+灵敏度问题）
+    const carouselContainer = document.querySelector('.carousel-container');
+    const carouselSlides = document.querySelectorAll('.carousel-slide');
+    const carouselIndicators = document.querySelectorAll('.carousel-indicator');
+    const prevBtn = document.querySelector('.prev');
+    const nextBtn = document.querySelector('.next');
+    let carouselIndex = 0;
+    let startX = 0;
+    let isDragging = false;
+    let carouselTimer = null;
+
+    function updateCarousel() {
+        carouselContainer.style.transform = `translateX(-${carouselIndex * 100}%)`;
+        carouselIndicators.forEach((indicator, i) => {
+            indicator.classList.toggle('active', i === carouselIndex);
+        });
+    }
+
+    // 按钮切换（优化防重复点击逻辑）
+    let isCarouselClicking = false;
+    nextBtn.addEventListener('click', () => {
+        if (isCarouselClicking) return;
+        isCarouselClicking = true;
+        carouselIndex = (carouselIndex + 1) % carouselSlides.length;
+        updateCarousel();
+        setTimeout(() => {
+            isCarouselClicking = false;
+        }, 500);
+    });
+    prevBtn.addEventListener('click', () => {
+        if (isCarouselClicking) return;
+        isCarouselClicking = true;
+        carouselIndex = (carouselIndex - 1 + carouselSlides.length) % carouselSlides.length;
+        updateCarousel();
+        setTimeout(() => {
+            isCarouselClicking = false;
+        }, 500);
+    });
+
+    // 指示器点击
+    carouselIndicators.forEach((indicator, i) => {
+        indicator.addEventListener('click', () => {
+            carouselIndex = i;
+            updateCarousel();
+        });
+    });
+
+    // 移动端触摸滑动（将触发距离从30改为50，降低灵敏度）
+    carouselContainer.addEventListener('touchstart', (e) => {
+        startX = e.touches[0].clientX;
+        isDragging = true;
+        carouselContainer.style.transition = 'none';
+        clearInterval(carouselTimer);
+    });
+    carouselContainer.addEventListener('touchmove', (e) => {
+        if (!isDragging) return;
+        const moveX = e.touches[0].clientX - startX;
+        carouselContainer.style.transform = `translateX(calc(-${carouselIndex * 100}% + ${moveX}px))`;
+    });
+    carouselContainer.addEventListener('touchend', (e) => {
+        isDragging = false;
+        carouselContainer.style.transition = 'transform 0.5s ease';
+        const endX = e.changedTouches[0].clientX;
+        const moveDistance = Math.abs(startX - endX);
+        // 增大触发阈值，从30改为50，解决灵敏度太高问题
+        if (moveDistance > 50) {
+            if (startX - endX > 0) {
+                // 向左滑动，切换下一张
+                carouselIndex = (carouselIndex + 1) % carouselSlides.length;
+            } else {
+                // 向右滑动，切换上一张
+                carouselIndex = (carouselIndex - 1 + carouselSlides.length) % carouselSlides.length;
+            }
+        }
+        updateCarousel();
+        startCarouselTimer();
+    });
+
+    // PC端鼠标拖拽滑动（将触发距离从30改为50，降低灵敏度）
+    carouselContainer.addEventListener('mousedown', (e) => {
+        startX = e.clientX;
+        isDragging = true;
+        carouselContainer.style.transition = 'none';
+        clearInterval(carouselTimer);
+    });
+    carouselContainer.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        const moveX = e.clientX - startX;
+        carouselContainer.style.transform = `translateX(calc(-${carouselIndex * 100}% + ${moveX}px))`;
+    });
+    carouselContainer.addEventListener('mouseup', (e) => {
+        isDragging = false;
+        carouselContainer.style.transition = 'transform 0.5s ease';
+        const endX = e.clientX;
+        const moveDistance = Math.abs(startX - endX);
+        // 增大触发阈值，从30改为50，解决灵敏度太高问题
+        if (moveDistance > 50) {
+            if (startX - endX > 0) {
+                // 向左拖动鼠标，切换下一张
+                carouselIndex = (carouselIndex + 1) % carouselSlides.length;
+            } else {
+                // 向右拖动鼠标，切换上一张
+                carouselIndex = (carouselIndex - 1 + carouselSlides.length) % carouselSlides.length;
+            }
+        }
+        updateCarousel();
+        startCarouselTimer();
+    });
+    // 鼠标离开容器结束拖拽
+    carouselContainer.addEventListener('mouseleave', () => {
+        isDragging = false;
+        carouselContainer.style.transition = 'transform 0.5s ease';
+        updateCarousel();
+        startCarouselTimer();
+    });
+
+    // 自动轮播
+    function startCarouselTimer() {
+        carouselTimer = setInterval(() => {
+            carouselIndex = (carouselIndex + 1) % carouselSlides.length;
+            updateCarousel();
+        }, 6000);
+    }
+    startCarouselTimer();
+
+    // 鼠标悬停轮播暂停
+    document.querySelector('.carousel').addEventListener('mouseenter', () => {
+        clearInterval(carouselTimer);
+    });
+    document.querySelector('.carousel').addEventListener('mouseleave', () => {
+        startCarouselTimer();
+    });
+
+    // 4. 回到顶部功能
+    const backToTop = document.querySelector('.back-to-top');
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 300) {
+            backToTop.classList.add('show');
+        } else {
+            backToTop.classList.remove('show');
+        }
+    });
+    backToTop.addEventListener('click', () => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    });
+
+    // 5. 平滑滚动
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href');
+            if (targetId === '#') return;
+            const targetElement = document.querySelector(targetId);
+            if (targetElement) {
+                const navHeight = document.querySelector('nav').offsetHeight;
+                const targetTop = targetElement.offsetTop - navHeight;
+                window.scrollTo({
+                    top: targetTop,
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+
+    // 6. 图片加载失败兜底
+    document.querySelectorAll('img').forEach(img => {
+        img.addEventListener('error', () => {
+            img.src = 'https://via.placeholder.com/800x500?text=图片加载失败';
+            img.alt = '图片加载失败';
+        });
+    });
+
+    // 7. 联系我们弹窗功能（与截图匹配）
+    const contactModalMask = document.getElementById('contactModalMask');
+    const contactLink = document.getElementById('contactLink');
+    const navContactLink = document.getElementById('navContactLink');
+    const closeModal = document.getElementById('closeModal');
+
+    // 显示弹窗
+    function showContactModal() {
+        contactModalMask.classList.add('show');
+        document.body.style.overflow = 'hidden';
+    }
+
+    // 隐藏弹窗
+    function hideContactModal() {
+        contactModalMask.classList.remove('show');
+        document.body.style.overflow = '';
+    }
+
+    // 点击链接显示弹窗
+    contactLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        showContactModal();
+    });
+    navContactLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        showContactModal();
+    });
+
+    // 点击关闭按钮/遮罩层隐藏弹窗
+    closeModal.addEventListener('click', hideContactModal);
+    contactModalMask.addEventListener('click', (e) => {
+        if (e.target === contactModalMask) hideContactModal();
+    });
+
+    // ESC键关闭弹窗
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && contactModalMask.classList.contains('show')) {
+            hideContactModal();
+        }
+    });
+</script>
+</body>
+</html>
